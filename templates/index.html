@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heart Failure Prediction</title>
+    <style>
+      /* Custom CSS */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f2f5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 700px;
+        box-sizing: border-box;
+      }
+      h1 {
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.2em;
+        font-weight: 600;
+      }
+      .form-group {
+        margin-bottom: 18px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+      }
+      input[type='text'],
+      input[type='number'] {
+        width: calc(100% - 20px);
+        padding: 12px 10px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        font-size: 1em;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      }
+      input[type='text']:focus,
+      input[type='number']:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: none;
+      }
+      .btn-predict {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+        margin-top: 25px;
+      }
+      .btn-predict:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+      .prediction-result {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 8px;
+        font-size: 1.1em;
+        text-align: center;
+        font-weight: 600;
+      }
+      .prediction-result.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .prediction-result.danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .prediction-result.error {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+      }
+      .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      @media (max-width: 600px) {
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+        .container {
+          padding: 20px 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Heart Failure Prediction</h1>
+      <form action="/predict" method="post">
+        <div class="feature-grid">
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              placeholder="e.g., 60"
+              required
+              step="any"
+            />
+          </div>
+          <div class="form-group">
+            <label for="anaemia">Anaemia (0=No, 1=Yes)</label>
+            <input
+              type="number"
+              id="anaemia"
+              name="anaemia"
+              placeholder="0 or 1"
+              required
+              min="0"
+              max="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="creatinine_phosphokinase"
+              >CPK (mcg/L)</label
+            >
+            <input
+              type="number"
+              id="creatinine_phosphokinase"
+              name="creatinine_phosphokinase"
+              placeholder="e.g., 582"
+              required
+              step="any"
+            />
+          </div>
+          <div class="form-group">
+            <label for="diabetes">Diabetes (0=No, 1=Yes)</label>
+            <input
+              type="number"
+              id="diabetes"
+              name="diabetes"
+              placeholder="0 or 1"
+              required
+              min="0"
+              max="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="ejection_fraction"
+              >Ejection Fraction (%)</label
+            >
+            <input
+              type="number"
+              id="ejection_fraction"
+              name="ejection_fraction"
+              placeholder="e.g., 35"
+              required
+              step="any"
+            />
+          </div>
+          <div class="form-group">
+            <label for="high_blood_pressure"
+              >High Blood Pressure (0=No, 1=Yes)</label
+            >
+            <input
+              type="number"
+              id="high_blood_pressure"
+              name="high_blood_pressure"
+              placeholder="0 or 1"
+              required
+              min="0"
+              max="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="platelets">Platelets (kiloplatelets/mL)</label>
+            <input
+              type="number"
+              id="platelets"
+              name="platelets"
+              placeholder="e.g., 265000"
+              required
+              step="any"
+            />
+          </div>
+          <div class="form-group">
+            <label for="serum_creatinine"
+              >Serum Creatinine (mg/dL)</label
+            >
+            <input
+              type="number"
+              id="serum_creatinine"
+              name="serum_creatinine"
+              placeholder="e.g., 1.9"
+              required
+              step="any"
+            />
+          </div>
+          <div class="form-group">
+            <label for="serum_sodium">Serum Sodium (mEq/L)</label>
+            <input
+              type="number"
+              id="serum_sodium"
+              name="serum_sodium"
+              placeholder="e.g., 130"
+              required
+              step="any"
+            />
+          </div>
+          <div class="form-group">
+            <label for="sex">Sex (0=Female, 1=Male)</label>
+            <input
+              type="number"
+              id="sex"
+              name="sex"
+              placeholder="0 or 1"
+              required
+              min="0"
+              max="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="smoking">Smoking (0=No, 1=Yes)</label>
+            <input
+              type="number"
+              id="smoking"
+              name="smoking"
+              placeholder="0 or 1"
+              required
+              min="0"
+              max="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="time">Follow-up Period (days)</label>
+            <input
+              type="number"
+              id="time"
+              name="time"
+              placeholder="e.g., 100"
+              required
+              step="any"
+            />
+          </div>
+        </div>
+        <button type="submit" class="btn-predict">Predict Heart Failure</button>
+      </form>
+
+      {% if prediction_text %}
+      <div
+        class="prediction-result {% if is_death_event %}danger{% elif error %}error{% else %}success{% endif %}"
+      >
+        {{ prediction_text }}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
